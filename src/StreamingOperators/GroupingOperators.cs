@@ -24,22 +24,18 @@ namespace StreamingOperators
             if (comparer == null) throw new ArgumentNullException(nameof(comparer));
 
             Grouping<TKey, TSource> grouping = null;
-            var previousKey = default(TKey);
-            var previousItemExists = false;
 
             foreach (var item in source)
             {
                 var key = keySelector(item);
 
-                if (!previousItemExists)
+                if (grouping == null)
                 {
-                    previousKey = key;
-                    previousItemExists = true;
                     grouping = new Grouping<TKey, TSource>(key, new List<TSource> { item });
                 }
                 else
                 {
-                    var comparisonResult = comparer.Compare(key, previousKey);
+                    var comparisonResult = comparer.Compare(key, grouping.Key);
                     if (comparisonResult > 0)
                     {
                         yield return grouping;
@@ -53,12 +49,10 @@ namespace StreamingOperators
                     {
                         throw new ArgumentException("The source collection is not ordered");
                     }
-
-                    previousKey = key;
                 }
             }
 
-            if (previousItemExists)
+            if (grouping != null)
             {
                 yield return grouping;
             }
