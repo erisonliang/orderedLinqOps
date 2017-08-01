@@ -8,7 +8,7 @@ namespace StreamingOperators.Test
     [TestFixture]
     public class StreamingOperatorsTests
     {
-        #region MergeJoin
+        #region OrderedJoin
         [Test]
         public void OrderedJoin_SimpleHappyPath()
         {
@@ -17,7 +17,7 @@ namespace StreamingOperators.Test
 
             var expected = new[] { 1, 2, 2 };
 
-            var actual = outer.MergeJoin(inner, i => i, i => i, (i, j) => i);
+            var actual = outer.OrderedJoin(inner, i => i, i => i, (i, j) => i);
 
             CollectionAssert.AreEquivalent(expected, actual);
         }
@@ -28,7 +28,7 @@ namespace StreamingOperators.Test
             var inner = new[] { 1, 3, 2 };
             var outer = new[] { 1, 2 };
 
-            Assert.Throws<ArgumentException>(() => outer.MergeJoin(inner, i => i, i => i, (i, j) => i).ToList());
+            Assert.Throws<ArgumentException>(() => outer.OrderedJoin(inner, i => i, i => i, (i, j) => i).ToList());
         }
 
         [Test]
@@ -37,9 +37,9 @@ namespace StreamingOperators.Test
             var inner = new[] { 1, 2, 3 };
             var outer = new[] { 1, 3, 2 };
 
-            Assert.Throws<ArgumentException>(() => outer.MergeJoin(inner, i => i, i => i, (i, j) => i).ToList());
+            Assert.Throws<ArgumentException>(() => outer.OrderedJoin(inner, i => i, i => i, (i, j) => i).ToList());
         }
-        #endregion MergeJoin
+        #endregion OrderedJoin
 
         //#region GroupMergeJoin
         //[Test]

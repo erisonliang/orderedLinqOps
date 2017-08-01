@@ -6,17 +6,17 @@ namespace StreamingOperators
 {
     public static class JoiningOperators
     {
-        public static IEnumerable<TResult> MergeJoin<TOuter, TInner, TKey, TResult>(this IEnumerable<TOuter> outer,
+        public static IEnumerable<TResult> OrderedJoin<TOuter, TInner, TKey, TResult>(this IEnumerable<TOuter> outer,
             IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector,
             Func<TOuter, TInner, TResult> resultSelector)
             where TKey : IComparable<TKey>
         {
             var comparer = Comparer<TKey>.Default;
 
-            return MergeJoin(outer, inner, outerKeySelector, innerKeySelector, resultSelector, comparer);
+            return OrderedJoin(outer, inner, outerKeySelector, innerKeySelector, resultSelector, comparer);
         }
 
-        public static IEnumerable<TResult> MergeJoin<TOuter, TInner, TKey, TResult>(this IEnumerable<TOuter> outer, 
+        public static IEnumerable<TResult> OrderedJoin<TOuter, TInner, TKey, TResult>(this IEnumerable<TOuter> outer, 
             IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, 
             Func<TOuter, TInner, TResult> resultSelector, IComparer<TKey> comparer)
         {
@@ -86,7 +86,7 @@ namespace StreamingOperators
         //{
         //    var groupedInner = inner.GroupBy(innerKeySelector);
 
-        //    return groupedInner.MergeJoin(outer, g => g.Key, outerKeySelector, (i, o) => resultSelector(o, i));
+        //    return groupedInner.OrderedJoin(outer, g => g.Key, outerKeySelector, (i, o) => resultSelector(o, i));
         //}
 
         //public static IEnumerable<TResult> GroupMergeJoin<TOuter, TInner, TKey, TResult>(this IEnumerable<TOuter> outer,
@@ -95,7 +95,7 @@ namespace StreamingOperators
         //{
         //    var groupedInner = inner.GroupBy(innerKeySelector);
 
-        //    return groupedInner.MergeJoin(outer, g => g.Key, outerKeySelector, (i, o) => resultSelector(o, i), comparer);
+        //    return groupedInner.OrderedJoin(outer, g => g.Key, outerKeySelector, (i, o) => resultSelector(o, i), comparer);
         //}
     }
 }
