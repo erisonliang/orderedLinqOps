@@ -14,15 +14,17 @@ namespace StreamingOperators
             return source.OrderedSelect(keySelector, resultSelector, comparer);
         }
 
-        public static IEnumerable<TResult> OrderedSelect<TSource, TKey, TResult>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TKey, TSource, TResult> resultSelector, IComparer<TKey> comparer)
+        public static IEnumerable<TResult> OrderedSelect<TSource, TKey, TResult>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, 
+            Func<TKey, TSource, TResult> resultSelector, IComparer<TKey> comparer)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
             if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
             if (resultSelector == null) throw new ArgumentNullException(nameof(resultSelector));
+            if (comparer == null) throw new ArgumentNullException(nameof(comparer));
 
-            TKey previousKey = default(TKey);
-            bool previousItemExists = false;
-            TResult result = default(TResult);
+            var previousKey = default(TKey);
+            var previousItemExists = false;
+            var result = default(TResult);
 
             foreach (var item in source)
             {

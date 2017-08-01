@@ -20,10 +20,12 @@ namespace StreamingOperators
             Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
+            if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
+            if (comparer == null) throw new ArgumentNullException(nameof(comparer));
 
             Grouping<TKey, TSource> grouping = null;
-            TKey previousKey = default(TKey);
-            bool previousItemExists = false;
+            var previousKey = default(TKey);
+            var previousItemExists = false;
 
             foreach (var item in source)
             {
@@ -51,6 +53,7 @@ namespace StreamingOperators
                     {
                         throw new ArgumentException("The source collection is not ordered");
                     }
+
                     previousKey = key;
                 }
             }

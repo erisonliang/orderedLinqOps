@@ -25,6 +25,7 @@ namespace StreamingOperators
             if (outerKeySelector == null) throw new ArgumentNullException(nameof(outerKeySelector));
             if (innerKeySelector == null) throw new ArgumentNullException(nameof(innerKeySelector));
             if (resultSelector == null) throw new ArgumentNullException(nameof(resultSelector));
+            if (comparer == null) throw new ArgumentNullException(nameof(comparer));
 
             var innerOrdered = inner.OrderedSelect(innerKeySelector, (k, i) => new { Key = k, Value = i }, comparer);
             using (var innerIterator = innerOrdered.GetEnumerator())
