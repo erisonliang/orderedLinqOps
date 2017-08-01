@@ -41,7 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="SelectionOperators.cs" />
-    <Compile Include="JoinOperators.cs" />
+    <Compile Include="JoiningOperators.cs" />
     <Compile Include="GroupingOperators.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace StreamingOperators
 {
-    public static class JoinOperators
+    public static class JoiningOperators
     {
         public static IEnumerable<TResult> MergeJoin<TOuter, TInner, TKey, TResult>(this IEnumerable<TOuter> outer,
             IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector,
