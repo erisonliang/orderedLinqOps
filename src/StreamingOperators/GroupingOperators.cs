@@ -8,13 +8,17 @@ namespace StreamingOperators
     public static class GroupingOperators
     {
         /// <summary>
-        /// Groups the elements of a sequence according to a specified key selector function and compares the keys by using a specified optional comparer.
+        /// Groups the elements of an ordered sequence according to a specified key selector function, using a specified optional comparer.
         /// </summary>
+        /// <remarks>
+        /// The operation works in a "streaming" way, meaning the input is not buffered, but passed along as soon as possible.
+        /// The ordering of the input is assumed to be compatible with the provided comparer. An exception will be thrown during the iteration if this assumption is not upheld.
+        /// </remarks>
         /// <typeparam name="TSource">The type of the elements of source.</typeparam>
         /// <typeparam name="TKey">The type of the key returned by keySelector.</typeparam>
-        /// <param name="source">An <see cref="IEnumerable{T}"/>  whose elements to group.</param>
+        /// <param name="source">A collection whose elements to group.</param>
         /// <param name="keySelector">A function to extract the key for each element.</param>
-        /// <param name="comparer">An <see cref="IComparer{T}"/> to compare keys with.</param>
+        /// <param name="comparer">A "sorting" comparer to compare keys with.</param>
         /// <returns>A collection of elements of type TResult where each element represents a projection over a group and its key.</returns>
         public static IEnumerable<IGrouping<TKey, TSource>> OrderedGroupBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey> comparer = null)
         {
@@ -22,17 +26,21 @@ namespace StreamingOperators
         }
 
         /// <summary>
-        /// Groups the elements of a sequence according to a specified key selector function and compares the keys by using a specified optional comparer.
+        /// Groups the elements of an ordered sequence according to a specified key selector function, using a specified optional comparer.
         /// The elements of each group are projected by using a specified function.
         /// The keys are compared by using a specified optional comparer.
         /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <typeparam name="TKey"></typeparam>
-        /// <typeparam name="TElement"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="keySelector"></param>
-        /// <param name="elementSelector"></param>
-        /// <param name="comparer"></param>
+        /// <remarks>
+        /// The operation works in a "streaming" way, meaning the input is not buffered, but passed along as soon as possible.
+        /// The ordering of the input is assumed to be compatible with the provided comparer. An exception will be thrown during the iteration if this assumption is not upheld.
+        /// </remarks>
+        /// <typeparam name="TSource">The type of the elements of source.</typeparam>
+        /// <typeparam name="TKey">The type of the key returned by keySelector.</typeparam>
+        /// <typeparam name="TElement">The type of the elements in each group.</typeparam>
+        /// <param name="source">A collection whose elements to group.</param>
+        /// <param name="keySelector">A function to extract the key for each element.</param>
+        /// <param name="elementSelector">A function to extract the key for each element.</param>
+        /// <param name="comparer">A "sorting" comparer to compare keys with.</param>
         /// <returns></returns>
         public static IEnumerable<IGrouping<TKey, TElement>> OrderedGroupBy<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IComparer<TKey> comparer = null)
         {
@@ -40,16 +48,20 @@ namespace StreamingOperators
         }
 
         /// <summary>
-        /// Groups the elements of a sequence according to a specified key selector function and creates a result value from each group and its key. 
+        /// Groups the elements of an ordered sequence according to a specified key selector function and creates a result value from each group and its key. 
         /// The keys are compared by using a specified optional comparer.
         /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <typeparam name="TKey"></typeparam>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="keySelector"></param>
-        /// <param name="resultSelector"></param>
-        /// <param name="comparer"></param>
+        /// <remarks>
+        /// The operation works in a "streaming" way, meaning the input is not buffered, but passed along as soon as possible.
+        /// The ordering of the input is assumed to be compatible with the provided comparer. An exception will be thrown during the iteration if this assumption is not upheld.
+        /// </remarks>
+        /// <typeparam name="TSource">The type of the elements of source.</typeparam>
+        /// <typeparam name="TKey">The type of the key returned by keySelector.</typeparam>
+        /// <typeparam name="TResult">The type of the result value returned by resultSelector.</typeparam>
+        /// <param name="source">A collection whose elements to group.</param>
+        /// <param name="keySelector">A function to extract the key for each element.</param>
+        /// <param name="resultSelector">A function to map each source element to an element in a group.</param>
+        /// <param name="comparer">A "sorting" comparer to compare keys with.</param>
         /// <returns></returns>
         public static IEnumerable<TResult> OrderedGroupBy<TSource, TKey, TResult>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TKey, IEnumerable<TSource>, TResult> resultSelector, IComparer<TKey> comparer = null)
         {
@@ -57,10 +69,14 @@ namespace StreamingOperators
         }
 
         /// <summary>
-        /// Groups the elements of a sequence according to a specified key selector function and creates a result value from each group and its key.
+        /// Groups the elements of an ordered sequence according to a specified key selector function and creates a result value from each group and its key.
         /// The elements of each group are projected by using a specified function.
         /// The keys are compared by using a specified optional comparer.
         /// </summary>
+        /// <remarks>
+        /// The operation works in a "streaming" way, meaning the input is not buffered, but passed along as soon as possible.
+        /// The ordering of the input is assumed to be compatible with the provided comparer. An exception will be thrown during the iteration if this assumption is not upheld.
+        /// </remarks>
         /// <typeparam name="TSource">The type of the elements of source.</typeparam>
         /// <typeparam name="TKey">The type of the key returned by keySelector.</typeparam>
         /// <typeparam name="TElement">The type of the elements in each group.</typeparam>
