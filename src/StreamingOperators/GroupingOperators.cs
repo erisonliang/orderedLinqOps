@@ -18,7 +18,7 @@ namespace StreamingOperators
         /// <returns>A collection of elements of type TResult where each element represents a projection over a group and its key.</returns>
         public static IEnumerable<IGrouping<TKey, TSource>> OrderedGroupBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey> comparer = null)
         {
-            return OrderedGroupByImpl(source, keySelector, IdentityFunction<TSource>.Instance, comparer);
+            return OrderedGroupByImpl(source, keySelector, IdentityFunction<TSource>.Instance, CreateGrouping, comparer);
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace StreamingOperators
         /// <returns></returns>
         public static IEnumerable<IGrouping<TKey, TElement>> OrderedGroupBy<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IComparer<TKey> comparer = null)
         {
-            return OrderedGroupByImpl(source, keySelector, elementSelector, comparer);
+            return OrderedGroupByImpl(source, keySelector, elementSelector, CreateGrouping, comparer);
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace StreamingOperators
         /// <returns></returns>
         public static IEnumerable<TResult> OrderedGroupBy<TSource, TKey, TResult>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TKey, IEnumerable<TSource>, TResult> resultSelector, IComparer<TKey> comparer = null)
         {
-            return OrderedGroupByImpl(source, keySelector, IdentityFunction<TSource>.Instance, comparer).Select(g => resultSelector(g.Key, g));
+            return OrderedGroupByImpl(source, keySelector, IdentityFunction<TSource>.Instance, resultSelector, comparer);
         }
 
         /// <summary>
@@ -73,70 +73,72 @@ namespace StreamingOperators
         /// <returns>A collection of elements of type TResult where each element represents a projection over a group and its key.</returns>
         public static IEnumerable<TResult> OrderedGroupBy<TSource, TKey, TElement, TResult>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, Func<TKey, IEnumerable<TElement>, TResult> resultSelector, IComparer<TKey> comparer = null)
         {
-            return OrderedGroupByImpl(source, keySelector, elementSelector, comparer).Select(g => resultSelector(g.Key, g)); ;
+            return OrderedGroupByImpl(source, keySelector, elementSelector, resultSelector, comparer);
         }
 
-        private static IEnumerable<IGrouping<TKey, TElement>> OrderedGroupByImpl<TSource, TKey, TElement>(this IEnumerable<TSource> source,
-            Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IComparer<TKey> comparer)
+        private static IEnumerable<TResult> OrderedGroupByImpl<TSource, TKey, TElement, TResult>(this IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, Func<TKey, IEnumerable<TElement>, TResult> resultSelector, IComparer<TKey> comparer)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
             if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
             if (comparer == null)
                 comparer = Comparer<TKey>.Default;
 
-            Grouping<TKey, TElement> grouping = null;
-
-            foreach (var item in source)
+            using (var iterator = source.GetEnumerator())
             {
-                var key = keySelector(item);
-
-                // the first item just creates the grouping
-                if (grouping == null)
+                // for the first item, there is nothing to compare it to, so we only extract the key and create the first group
+                if (!iterator.MoveNext())
                 {
-                    grouping = new Grouping<TKey, TElement>(key) { elementSelector(item) };
+                    yield break;
                 }
-                else
+
+                var item = iterator.Current;
+                var grouping = (key: keySelector(item), list: new List<TElement> { elementSelector(item) });
+
+                while (iterator.MoveNext())
                 {
                     // Each item is compared to the group key. When equal, it's added to the group. 
                     // When bigger, the previous (now complete) group is yielded and new one is created.
-                    var comparisonResult = comparer.Compare(key, grouping.Key);
+                    item = iterator.Current;
+                    var key = keySelector(item);
+                    var comparisonResult = comparer.Compare(key, grouping.key);
                     if (comparisonResult > 0)
                     {
-                        yield return grouping;
-                        grouping = new Grouping<TKey, TElement>(key) { elementSelector(item) };
+                        yield return resultSelector(grouping.key, grouping.list);
+                        grouping = (key, new List<TElement> { elementSelector(item) });
                     }
                     else if (comparisonResult == 0)
                     {
-                        grouping.Add(elementSelector(item));
+                        grouping.list.Add(elementSelector(item));
                     }
                     else
                     {
                         throw new ArgumentException("The source collection is not ordered");
                     }
                 }
-            }
 
-            // unless source collection was empty, there is one last group to yield
-            if (grouping != null)
-            {
-                yield return grouping;
+                yield return resultSelector(grouping.key, grouping.list);
             }
         }
 
-        private class Grouping<TKey, TSource> : IGrouping<TKey, TSource>
+        private static Grouping<TKey, TElement> CreateGrouping<TKey, TElement>(TKey key, IEnumerable<TElement> collection)
         {
-            private readonly ICollection<TSource> collection = new List<TSource>();
+            return new Grouping<TKey, TElement>(key, collection);
+        }
 
-            public Grouping(TKey key)
+        private class Grouping<TKey, TElement> : IGrouping<TKey, TElement>
+        {
+            private readonly IEnumerable<TElement> collection;
+
+            public Grouping(TKey key, IEnumerable<TElement> collection)
             {
                 this.Key = key;
+                this.collection = collection;
             }
 
             public TKey Key { get; }
 
-            internal void Add(TSource item) => this.collection.Add(item);
-
-            public IEnumerator<TSource> GetEnumerator() => this.collection.GetEnumerator();
+            public IEnumerator<TElement> GetEnumerator() => this.collection.GetEnumerator();
 
             IEnumerator IEnumerable.GetEnumerator()
             {
