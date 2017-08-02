@@ -16,8 +16,8 @@ namespace StreamingOperators
             return OrderedJoin(outer, inner, outerKeySelector, innerKeySelector, resultSelector, comparer);
         }
 
-        public static IEnumerable<TResult> OrderedJoin<TOuter, TInner, TKey, TResult>(this IEnumerable<TOuter> outer, 
-            IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, 
+        public static IEnumerable<TResult> OrderedJoin<TOuter, TInner, TKey, TResult>(this IEnumerable<TOuter> outer,
+            IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector,
             Func<TOuter, TInner, TResult> resultSelector, IComparer<TKey> comparer)
         {
             if (outer == null) throw new ArgumentNullException(nameof(outer));
@@ -27,10 +27,10 @@ namespace StreamingOperators
             if (resultSelector == null) throw new ArgumentNullException(nameof(resultSelector));
             if (comparer == null) throw new ArgumentNullException(nameof(comparer));
 
-            var innerOrdered = inner.OrderedSelect(innerKeySelector, (k, i) => new { Key = k, Value = i }, comparer);
+            var innerOrdered = inner.OrderedSelect(innerKeySelector, (k, i) => (k, i), comparer);
             using (var innerIterator = innerOrdered.GetEnumerator())
             {
-                var outerOrdered = outer.OrderedSelect(outerKeySelector, (k, i) => new { Key = k, Value = i }, comparer);
+                var outerOrdered = outer.OrderedSelect(outerKeySelector, (k, i) => (k, i), comparer);
                 using (var outerIterator = outerOrdered.GetEnumerator())
                 {
                     if (!innerIterator.MoveNext() || !outerIterator.MoveNext())
@@ -40,11 +40,8 @@ namespace StreamingOperators
 
                     while (true)
                     {
-                        var innerValue = innerIterator.Current.Value;
-                        var innerKey = innerIterator.Current.Key;
-
-                        var outerValue = outerIterator.Current.Value;
-                        var outerKey = outerIterator.Current.Key;
+                        (var innerKey, var innerValue) = innerIterator.Current;
+                        (var outerKey, var outerValue) = outerIterator.Current;
 
                         var comparisonResult = comparer.Compare(innerKey, outerKey);
 
@@ -64,7 +61,7 @@ namespace StreamingOperators
                                 yield break;
                             }
                         }
-                        else // must be equal
+                        else // comparisonResult == 0
                         {
                             yield return resultSelector(outerValue, innerValue);
 

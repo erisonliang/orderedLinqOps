@@ -17,7 +17,7 @@ namespace StreamingOperators.Test
 
             var expected = new[] { 1, 2, 2 };
 
-            var actual = outer.OrderedJoin(inner, i => i, i => i, (i, j) => i);
+            var actual = outer.OrderedJoin(inner, i => i, j => j, (i, j) => i);
 
             CollectionAssert.AreEquivalent(expected, actual);
         }
@@ -30,7 +30,7 @@ namespace StreamingOperators.Test
 
             var expected = new[] { (1, 1), (2, 2), (2, 2) };
 
-            var actual = outer.OrderedJoin(inner, i => i, i => i, (i, j) => (i, j));
+            var actual = outer.OrderedJoin(inner, i => i, j => j, (i, j) => (i, j));
 
             CollectionAssert.AreEquivalent(expected, actual);
         }
@@ -39,7 +39,7 @@ namespace StreamingOperators.Test
         public void OrderedJoin_ThrowsWhenInnerUnordered()
         {
             var inner = new[] { 1, 3, 2 };
-            var outer = new[] { 1, 2 };
+            var outer = new[] { 1, 2, 3, 4 };
 
             Assert.Throws<ArgumentException>(() => outer.OrderedJoin(inner, i => i, i => i, (i, j) => i).ToList());
         }
@@ -47,7 +47,7 @@ namespace StreamingOperators.Test
         [Test]
         public void OrderedJoin_ThrowsWhenOuterUnordered()
         {
-            var inner = new[] { 1, 2, 3 };
+            var inner = new[] { 1, 2, 3, 4 };
             var outer = new[] { 1, 3, 2 };
 
             Assert.Throws<ArgumentException>(() => outer.OrderedJoin(inner, i => i, i => i, (i, j) => i).ToList());

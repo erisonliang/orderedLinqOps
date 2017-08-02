@@ -22,27 +22,28 @@ namespace StreamingOperators
             if (resultSelector == null) throw new ArgumentNullException(nameof(resultSelector));
             if (comparer == null) throw new ArgumentNullException(nameof(comparer));
 
-            var previousKey = default(TKey);
-            var previousItemExists = false;
-            var result = default(TResult);
-
-            foreach (var item in source)
+            using (var iterator = source.GetEnumerator())
             {
-                var key = keySelector(item);
-
-                if (!previousItemExists)
+                // for the first item, there is nothing to compare it to, so we only extract the key
+                if (!iterator.MoveNext())
                 {
-                    previousKey = key;
-                    previousItemExists = true;
-                    result = resultSelector(key, item);
+                    yield break;
                 }
-                else
+
+                var item = iterator.Current;
+                var previousKey = keySelector(item); ;
+                yield return resultSelector(previousKey, item);
+
+                // for all the other items, we compare the current key to the previous one
+                while (iterator.MoveNext())
                 {
+                    item = iterator.Current;
+                    var key = keySelector(item);
+
                     var comparisonResult = comparer.Compare(key, previousKey);
                     if (comparisonResult >= 0)
                     {
-                        yield return result;
-                        result = resultSelector(key, item);
+                        yield return resultSelector(key, item);
                         previousKey = key;
                     }
                     else
@@ -50,11 +51,6 @@ namespace StreamingOperators
                         throw new ArgumentException("The source collection is not ordered");
                     }
                 }
-            }
-
-            if (previousItemExists)
-            {
-                yield return result;
             }
         }
     }

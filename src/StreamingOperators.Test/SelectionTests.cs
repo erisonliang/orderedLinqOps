@@ -11,11 +11,10 @@ namespace StreamingOperators.Test
         [Test]
         public void OrderedSelect_SimpleHappyPath()
         {
-
             var input = new[] { 1, 2, 3 };
 
-            var actual = input.OrderedSelect(i => (decimal)i, (i, j) => j * i);
-            var expected = new[] { 1m, 4m, 9m };
+            var actual = input.OrderedSelect(i => i * i, (i, j) => (j, i));
+            var expected = new[] { (1, 1), (2, 4), (3, 9) };
 
             CollectionAssert.AreEquivalent(expected, actual);
         }
@@ -24,7 +23,7 @@ namespace StreamingOperators.Test
         public void OrderedSelect_ThrowsWhenUnordered()
         {
             var input = new[] { 1, 3, 2 };
-            
+
             Assert.Throws<ArgumentException>(() => input.OrderedSelect(i => (decimal)i, (i, j) => j * i).ToList());
         }
     }
