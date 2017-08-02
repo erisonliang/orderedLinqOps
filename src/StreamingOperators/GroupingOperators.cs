@@ -21,7 +21,8 @@ namespace StreamingOperators
         /// <param name="comparer">A "sorting" comparer to compare keys with.</param>
         /// <returns>A collection where each object contains a sequence of objects and a key.</returns>
         /// <exception cref="ArgumentException">The input sequences is out of order.</exception>
-        public static IEnumerable<IGrouping<TKey, TSource>> OrderedGroupBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey> comparer = null)
+        public static IEnumerable<IGrouping<TKey, TSource>> OrderedGroupBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector,
+            IComparer<TKey> comparer = null)
         {
             return OrderedGroupBy(source, keySelector, IdentityFunction<TSource>.Instance, CreateGrouping, comparer);
         }
@@ -44,7 +45,8 @@ namespace StreamingOperators
         /// <param name="comparer">A "sorting" comparer to compare keys with.</param>
         /// <returns>A collection where each object contains a sequence of objects and a key.</returns>
         /// <exception cref="ArgumentException">The input sequences is out of order.</exception>
-        public static IEnumerable<IGrouping<TKey, TElement>> OrderedGroupBy<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IComparer<TKey> comparer = null)
+        public static IEnumerable<IGrouping<TKey, TElement>> OrderedGroupBy<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector,
+            Func<TSource, TElement> elementSelector, IComparer<TKey> comparer = null)
         {
             return OrderedGroupBy(source, keySelector, elementSelector, CreateGrouping, comparer);
         }
@@ -66,7 +68,8 @@ namespace StreamingOperators
         /// <param name="comparer">A "sorting" comparer to compare keys with.</param>
         /// <returns>A collection of elements of type TResult where each element represents a projection over a group and its key.</returns>
         /// <exception cref="ArgumentException">The input sequences is out of order.</exception>
-        public static IEnumerable<TResult> OrderedGroupBy<TSource, TKey, TResult>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TKey, IEnumerable<TSource>, TResult> resultSelector, IComparer<TKey> comparer = null)
+        public static IEnumerable<TResult> OrderedGroupBy<TSource, TKey, TResult>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector,
+            Func<TKey, IEnumerable<TSource>, TResult> resultSelector, IComparer<TKey> comparer = null)
         {
             return OrderedGroupBy(source, keySelector, IdentityFunction<TSource>.Instance, resultSelector, comparer);
         }
@@ -91,8 +94,8 @@ namespace StreamingOperators
         /// <param name="comparer">A "sorting" comparer to compare keys with.</param>
         /// <returns>A collection of elements of type TResult where each element represents a projection over a group and its key.</returns>
         /// <exception cref="ArgumentException">The input sequences is out of order.</exception>
-        private static IEnumerable<TResult> OrderedGroupBy<TSource, TKey, TElement, TResult>(this IEnumerable<TSource> source,
-            Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, Func<TKey, IEnumerable<TElement>, TResult> resultSelector, IComparer<TKey> comparer)
+        private static IEnumerable<TResult> OrderedGroupBy<TSource, TKey, TElement, TResult>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, 
+            Func<TSource, TElement> elementSelector, Func<TKey, IEnumerable<TElement>, TResult> resultSelector, IComparer<TKey> comparer)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
             if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
@@ -101,12 +104,12 @@ namespace StreamingOperators
 
             using (var iterator = source.GetEnumerator())
             {
-                // for the first item, there is nothing to compare it to, so we only extract the key and create the first group
                 if (!iterator.MoveNext())
                 {
                     yield break;
                 }
 
+                // for the first item, there is nothing to compare it to, so we only extract the key and create the first group
                 var item = iterator.Current;
                 var grouping = (key: keySelector(item), list: new List<TElement> { elementSelector(item) });
 

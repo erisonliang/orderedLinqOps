@@ -25,8 +25,8 @@ namespace StreamingOperators
         /// <param name="comparer">A "sorting" comparer to compare keys with.</param>
         /// <returns>A collection that has elements of type TResult that are obtained by performing an inner join on two sequences.</returns>
         /// <exception cref="ArgumentException">Any of the input sequences is out of order.</exception>
-        public static IEnumerable<TResult> OrderedJoin<TOuter, TInner, TKey, TResult>(this IEnumerable<TOuter> outer,
-            IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector,
+        public static IEnumerable<TResult> OrderedJoin<TOuter, TInner, TKey, TResult>(this IEnumerable<TOuter> outer, IEnumerable<TInner> inner,
+            Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector,
             Func<TOuter, TInner, TResult> resultSelector, IComparer<TKey> comparer = null)
         {
             if (outer == null) throw new ArgumentNullException(nameof(outer));
@@ -40,10 +40,15 @@ namespace StreamingOperators
             var innerOrdered = inner.OrderedSelect(innerKeySelector, (k, i) => (k, i), comparer);
             using (var innerIterator = innerOrdered.GetEnumerator())
             {
+                if (!innerIterator.MoveNext())
+                {
+                    yield break;
+                }
+
                 var outerOrdered = outer.OrderedSelect(outerKeySelector, (k, i) => (k, i), comparer);
                 using (var outerIterator = outerOrdered.GetEnumerator())
                 {
-                    if (!innerIterator.MoveNext() || !outerIterator.MoveNext())
+                    if (!outerIterator.MoveNext())
                     {
                         yield break;
                     }

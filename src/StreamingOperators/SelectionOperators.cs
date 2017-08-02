@@ -32,12 +32,12 @@ namespace StreamingOperators
 
             using (var iterator = source.GetEnumerator())
             {
-                // for the first item, there is nothing to compare it to, so we only extract the key
                 if (!iterator.MoveNext())
                 {
                     yield break;
                 }
 
+                // for the first item, there is nothing to compare it to, so we only extract the key
                 var item = iterator.Current;
                 var previousKey = keySelector(item); ;
                 yield return resultSelector(previousKey, item);
