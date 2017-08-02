@@ -7,6 +7,7 @@ namespace StreamingOperators
     {
         /// <summary>
         /// Projects each element of an ordered sequence into a new form, while checking the correctness of the ordering.
+        /// If you don't need the order-checking, use LINQ Select.
         /// </summary>
         /// <remarks>
         /// The operation works in a "streaming" way, meaning the input is not buffered, but passed along as soon as possible.

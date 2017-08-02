@@ -23,19 +23,6 @@ namespace StreamingOperators.Test
         }
 
         [Test]
-        public void OrderedJoin_Tuples()
-        {
-            var inner = new[] { 1, 2, 2, 3 };
-            var outer = new[] { 1, 2, 4 };
-
-            var expected = new[] { (1, 1), (2, 2), (2, 2) };
-
-            var actual = outer.OrderedJoin(inner, i => i, j => j, (i, j) => (i, j));
-
-            CollectionAssert.AreEquivalent(expected, actual);
-        }
-
-        [Test]
         public void OrderedJoin_ThrowsWhenInnerUnordered()
         {
             var inner = new[] { 1, 3, 2 };
