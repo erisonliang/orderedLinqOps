@@ -22,7 +22,7 @@ namespace StreamingOperators
         /// <returns>A collection of elements of type TResult where each element represents a projection over a group and its key.</returns>
         public static IEnumerable<IGrouping<TKey, TSource>> OrderedGroupBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey> comparer = null)
         {
-            return OrderedGroupByImpl(source, keySelector, IdentityFunction<TSource>.Instance, CreateGrouping, comparer);
+            return OrderedGroupBy(source, keySelector, IdentityFunction<TSource>.Instance, CreateGrouping, comparer);
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace StreamingOperators
         /// <returns></returns>
         public static IEnumerable<IGrouping<TKey, TElement>> OrderedGroupBy<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IComparer<TKey> comparer = null)
         {
-            return OrderedGroupByImpl(source, keySelector, elementSelector, CreateGrouping, comparer);
+            return OrderedGroupBy(source, keySelector, elementSelector, CreateGrouping, comparer);
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace StreamingOperators
         /// <returns></returns>
         public static IEnumerable<TResult> OrderedGroupBy<TSource, TKey, TResult>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TKey, IEnumerable<TSource>, TResult> resultSelector, IComparer<TKey> comparer = null)
         {
-            return OrderedGroupByImpl(source, keySelector, IdentityFunction<TSource>.Instance, resultSelector, comparer);
+            return OrderedGroupBy(source, keySelector, IdentityFunction<TSource>.Instance, resultSelector, comparer);
         }
 
         /// <summary>
@@ -87,12 +87,7 @@ namespace StreamingOperators
         /// <param name="resultSelector">A function to map each source element to an element in a group.</param>
         /// <param name="comparer">A "sorting" comparer to compare keys with.</param>
         /// <returns>A collection of elements of type TResult where each element represents a projection over a group and its key.</returns>
-        public static IEnumerable<TResult> OrderedGroupBy<TSource, TKey, TElement, TResult>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, Func<TKey, IEnumerable<TElement>, TResult> resultSelector, IComparer<TKey> comparer = null)
-        {
-            return OrderedGroupByImpl(source, keySelector, elementSelector, resultSelector, comparer);
-        }
-
-        private static IEnumerable<TResult> OrderedGroupByImpl<TSource, TKey, TElement, TResult>(this IEnumerable<TSource> source,
+        private static IEnumerable<TResult> OrderedGroupBy<TSource, TKey, TElement, TResult>(this IEnumerable<TSource> source,
             Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, Func<TKey, IEnumerable<TElement>, TResult> resultSelector, IComparer<TKey> comparer)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));

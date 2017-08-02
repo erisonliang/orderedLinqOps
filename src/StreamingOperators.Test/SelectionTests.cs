@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
@@ -24,7 +25,7 @@ namespace StreamingOperators.Test
         {
             var input = new[] { 1, 3, 2 };
 
-            Assert.Throws<ArgumentException>(() => input.OrderedSelect(i => (decimal)i, (i, j) => j * i).ToList());
+            Assert.Throws<ArgumentException>(() => input.OrderedSelect(i => i, (i, j) => j * i).ToList());
         }
     }
 }

@@ -5,22 +5,29 @@ namespace StreamingOperators
 {
     public static class SelectionOperators
     {
-        public static IEnumerable<TResult> OrderedSelect<TSource, TKey, TResult>(
-            this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TKey, TSource, TResult> resultSelector)
-            where TKey : IComparable<TKey>
-        {
-            var comparer = Comparer<TKey>.Default;
-
-            return source.OrderedSelect(keySelector, resultSelector, comparer);
-        }
-
+        /// <summary>
+        /// Projects each element of an ordered sequence into a new form, while checking the correctness of the ordering.
+        /// </summary>
+        /// <remarks>
+        /// The operation works in a "streaming" way, meaning the input is not buffered, but passed along as soon as possible.
+        /// The ordering of the input is assumed to be compatible with the provided comparer. An exception will be thrown during the iteration if this assumption is not upheld.
+        /// </remarks>
+        /// <typeparam name="TSource">The type of the elements of source.</typeparam>
+        /// <typeparam name="TKey">The type of the key returned by keySelector.</typeparam>
+        /// <typeparam name="TResult">The type of the result value returned by resultSelector.</typeparam>
+        /// <param name="source">A sequence of values to invoke a transform function on.</param>
+        /// <param name="keySelector">A function to extract the key for each element.</param>
+        /// <param name="resultSelector">A transform function to apply to each element.</param>
+        /// <param name="comparer">A "sorting" comparer to compare keys with.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> whose elements are the result of invoking the transform function on each element of source.</returns>
         public static IEnumerable<TResult> OrderedSelect<TSource, TKey, TResult>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, 
-            Func<TKey, TSource, TResult> resultSelector, IComparer<TKey> comparer)
+            Func<TKey, TSource, TResult> resultSelector, IComparer<TKey> comparer = null)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
             if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
             if (resultSelector == null) throw new ArgumentNullException(nameof(resultSelector));
-            if (comparer == null) throw new ArgumentNullException(nameof(comparer));
+            if (comparer == null)
+                comparer = Comparer<TKey>.Default;
 
             using (var iterator = source.GetEnumerator())
             {
