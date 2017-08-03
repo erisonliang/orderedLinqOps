@@ -10,9 +10,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		global.json = global.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreamingOperators.Test", "src\StreamingOperators.Test\StreamingOperators.Test.csproj", "{067456C0-086C-46A8-B37F-1405717B7BFC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderedLinqOps.Test", "src\OrderedLinqOps.Test\OrderedLinqOps.Test.csproj", "{067456C0-086C-46A8-B37F-1405717B7BFC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreamingOperators", "src\StreamingOperators\StreamingOperators.csproj", "{DA2270BA-A20F-4EB4-97BA-38414E90541B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderedLinqOps", "src\OrderedLinqOps\OrderedLinqOps.csproj", "{DA2270BA-A20F-4EB4-97BA-38414E90541B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace StreamingOperators
+namespace OrderedLinqOps
 {
     /// <summary>
     /// Implements the Select operators

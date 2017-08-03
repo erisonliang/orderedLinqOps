@@ -3,10 +3,10 @@ using System.Linq;
 using NUnit.Framework;
 
 
-namespace StreamingOperators.Test
+namespace OrderedLinqOps.Test
 {
     [TestFixture]
-    public class StreamingOperatorsTests
+    public class JoiningTests
     {
         #region OrderedJoin
         [Test]

@@ -5,7 +5,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard1.0\StreamingOperators.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard1.0\OrderedLinqOps.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard1.0\OrderedLinqOps.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

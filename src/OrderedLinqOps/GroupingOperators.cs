@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace StreamingOperators
+namespace OrderedLinqOps
 {
     /// <summary>
     /// Implements the GroupBy operators
