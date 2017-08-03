@@ -47,7 +47,7 @@ Sometimes however, you are working with big data that you can't or won't buffer 
 Also, generally, in cases you have pre-ordered data, it makes sense to use that fact to speed up processing. Without the need to pre-build a hashtable, and without the hash-lookups, order-based processing will be much faster than normal LINQs hash-based one.
 
 ## See also
-Stephen Cleary's [Comparers](https://github.com/StnCleary/Comparers) library for easy declarative creation of both hash-based and order-based comparers.
+Stephen Cleary's [Comparers](https://github.com/StnCleary/Comparers) library for easy declarative creation of both hashing and sorting comparers.
 
 ## License
 This project is licensed under LGPL 3.0 - see the [LICENSE.md](LICENSE.md) file for details
