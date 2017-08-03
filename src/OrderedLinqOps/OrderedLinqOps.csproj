@@ -5,12 +5,14 @@
     <Authors>Jan Slavetinsky</Authors>
     <Company></Company>
     <Product>OrderedLinqOps</Product>
+	<Title>Ordered LINQ Operators</Title>
     <Description>Alternatives to some hashing-based LINQ operators (GroupBy, Join), based on ordered inputs.</Description>
     <PackageLicenseUrl>https://www.gnu.org/licenses/lgpl-3.0.en.html</PackageLicenseUrl>
 	<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>https://github.com/janslav/orderedLinqOps</PackageProjectUrl>
     <PackageReleaseNotes>First Release</PackageReleaseNotes>
 	<PackageTags>linq</PackageTags>
+	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
