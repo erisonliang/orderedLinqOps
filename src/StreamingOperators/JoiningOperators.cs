@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace StreamingOperators
 {
+    /// <summary>
+    /// Implements the Join operators
+    /// </summary>
     public static class JoiningOperators
     {
         /// <summary>

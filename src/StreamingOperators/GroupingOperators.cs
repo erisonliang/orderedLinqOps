@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace StreamingOperators
 {
+    /// <summary>
+    /// Implements the GroupBy operators
+    /// </summary>
     public static class GroupingOperators
     {
         /// <summary>

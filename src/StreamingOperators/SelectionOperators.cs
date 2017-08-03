@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace StreamingOperators
 {
+    /// <summary>
+    /// Implements the Select operators
+    /// </summary>
     public static class SelectionOperators
     {
         /// <summary>
