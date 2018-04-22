@@ -5,7 +5,6 @@ using System.Linq;
 
 namespace OrderedLinqOps
 {
-    // Implements the GroupBy operators
     public static partial class OrderedLinqOperators
     {
         /// <summary>
@@ -70,7 +69,7 @@ namespace OrderedLinqOps
         /// <returns>A collection of elements of type TResult where each element represents a projection over a group and its key.</returns>
         /// <exception cref="ArgumentException">The input sequences is out of order.</exception>
         public static IEnumerable<TResult> OrderedGroupBy<TSource, TKey, TResult>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector,
-            Func<TKey, IEnumerable<TSource>, TResult> resultSelector, IComparer<TKey> comparer = null)
+            Func<TKey, IReadOnlyCollection<TSource>, TResult> resultSelector, IComparer<TKey> comparer = null)
         {
             return OrderedGroupBy(source, keySelector, IdentityFunction<TSource>.Instance, resultSelector, comparer);
         }
@@ -96,7 +95,7 @@ namespace OrderedLinqOps
         /// <returns>A collection of elements of type TResult where each element represents a projection over a group and its key.</returns>
         /// <exception cref="ArgumentException">The input sequences is out of order.</exception>
         private static IEnumerable<TResult> OrderedGroupBy<TSource, TKey, TElement, TResult>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, 
-            Func<TSource, TElement> elementSelector, Func<TKey, IEnumerable<TElement>, TResult> resultSelector, IComparer<TKey> comparer)
+            Func<TSource, TElement> elementSelector, Func<TKey, IReadOnlyCollection<TElement>, TResult> resultSelector, IComparer<TKey> comparer)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
             if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
@@ -136,20 +135,21 @@ namespace OrderedLinqOps
                     }
                 }
 
+                // don't forget the last group
                 yield return resultSelector(grouping.key, grouping.list);
             }
         }
 
-        private static Grouping<TKey, TElement> CreateGrouping<TKey, TElement>(TKey key, IEnumerable<TElement> collection)
+        private static Grouping<TKey, TElement> CreateGrouping<TKey, TElement>(TKey key, IReadOnlyCollection<TElement> collection)
         {
             return new Grouping<TKey, TElement>(key, collection);
         }
 
         private class Grouping<TKey, TElement> : IGrouping<TKey, TElement>
         {
-            private readonly IEnumerable<TElement> collection;
+            private readonly IReadOnlyCollection<TElement> collection;
 
-            public Grouping(TKey key, IEnumerable<TElement> collection)
+            public Grouping(TKey key, IReadOnlyCollection<TElement> collection)
             {
                 this.Key = key;
                 this.collection = collection;

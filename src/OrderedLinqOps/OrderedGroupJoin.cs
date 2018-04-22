@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace OrderedLinqOps
 {
     public static partial class OrderedLinqOperators
     {
         /// <summary>
-        /// Correlates the elements of two ordered sequences based on matching keys, using a specified optional comparer.
+        /// Correlates the elements of two ordered sequences based on matching keys and groups the results, using a specified optional comparer.
+        /// Yields a result for each element of the outer sequence.
         /// </summary>
         /// <remarks>
         /// The operation works in a "streaming" way, meaning the input is not buffered, but passed along as soon as possible.
@@ -22,11 +24,11 @@ namespace OrderedLinqOps
         /// <param name="innerKeySelector">A function to extract the join key from each element of the second sequence.</param>
         /// <param name="resultSelector">A function to create a result element from two matching elements.</param>
         /// <param name="comparer">A "sorting" comparer to compare keys with.</param>
-        /// <returns>A collection that has elements of type TResult that are obtained by performing an inner join on two sequences.</returns>
+        /// <returns>A collection that has elements of type TResult that are obtained by performing a grouped join on two sequences.</returns>
         /// <exception cref="ArgumentException">Any of the input sequences is out of order.</exception>
-        public static IEnumerable<TResult> OrderedJoin<TOuter, TInner, TKey, TResult>(this IEnumerable<TOuter> outer, IEnumerable<TInner> inner,
-            Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector,
-            Func<TOuter, TInner, TResult> resultSelector, IComparer<TKey> comparer = null)
+        public static IEnumerable<TResult> OrderedGroupJoin<TOuter, TInner, TKey, TResult>(this IEnumerable<TOuter> outer,
+            IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector,
+            Func<TOuter, IReadOnlyCollection<TInner>, TResult> resultSelector, IComparer<TKey> comparer = null)
         {
             if (outer == null) throw new ArgumentNullException(nameof(outer));
             if (inner == null) throw new ArgumentNullException(nameof(inner));
@@ -36,58 +38,60 @@ namespace OrderedLinqOps
             if (comparer == null)
                 comparer = Comparer<TKey>.Default;
 
-            var innerOrdered = inner.OrderedSelect(innerKeySelector, (k, i) => (k, i), comparer);
-            using (var innerIterator = innerOrdered.GetEnumerator())
+            var outerOrdered = outer.OrderedGroupBy(outerKeySelector, (k, i) => (k, i), comparer);
+            using (var outerIterator = outerOrdered.GetEnumerator())
             {
-                if (!innerIterator.MoveNext())
+                if (!outerIterator.MoveNext())
                 {
                     yield break;
                 }
 
-                var outerOrdered = outer.OrderedGroupBy(outerKeySelector, (k, i) => (k, i), comparer);
-                using (var outerIterator = outerOrdered.GetEnumerator())
+                (var outerKey, var outerGroup) = outerIterator.Current;
+
+                var innerOrdered = inner.OrderedGroupBy(innerKeySelector, (k, i) => (k, i), comparer);
+                using (var innerIterator = innerOrdered.GetEnumerator())
                 {
-                    if (!outerIterator.MoveNext())
-                    {
-                        yield break;
-                    }
+                    var innerHasValue = innerIterator.MoveNext();
 
                     while (true)
                     {
-                        (var innerKey, var innerValue) = innerIterator.Current;
-                        (var outerKey, var outerGroup) = outerIterator.Current;
+                        IReadOnlyCollection<TInner> innerGroup;
 
-                        var comparisonResult = comparer.Compare(innerKey, outerKey);
-
-                        if (comparisonResult < 0)
+                        if (innerHasValue)
                         {
-                            // advance inner
-                            if (!innerIterator.MoveNext())
+                            TKey innerKey;
+                            (innerKey, innerGroup) = innerIterator.Current;
+                            var comparisonResult = comparer.Compare(innerKey, outerKey);
+
+                            if (comparisonResult < 0)
                             {
-                                yield break;
+                                // advance (discard) inner
+                                innerHasValue = innerIterator.MoveNext();
+                                continue;
+                            }
+                            if (comparisonResult != 0)
+                            {
+                                // yield an empty group
+                                innerGroup = new TInner[0];
                             }
                         }
-                        else if (comparisonResult > 0)
+                        else
                         {
-                            // advance outer
-                            if (!outerIterator.MoveNext())
-                            {
-                                yield break;
-                            }
+                            innerGroup = new TInner[0];
                         }
-                        else // comparisonResult == 0
-                        {
-                            foreach (var outerValue in outerGroup)
-                            {
-                                yield return resultSelector(outerValue, innerValue);
-                            }
 
-                            // advance inner
-                            if (!innerIterator.MoveNext())
-                            {
-                                yield break;
-                            }
+                        foreach (var outerValue in outerGroup)
+                        {
+                            yield return resultSelector(outerValue, innerGroup);
                         }
+
+                        // advance outer
+                        if (!outerIterator.MoveNext())
+                        {
+                            yield break;
+                        }
+
+                        (outerKey, outerGroup) = outerIterator.Current;
                     }
                 }
             }
