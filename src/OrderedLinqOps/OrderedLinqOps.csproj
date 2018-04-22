@@ -6,13 +6,15 @@
     <Company></Company>
     <Product>OrderedLinqOps</Product>
 	<Title>Ordered LINQ Operators</Title>
-    <Description>Alternatives to some hashing-based LINQ operators (GroupBy, Join), based on ordered inputs.</Description>
+    <Description>Alternatives to some hashing-based LINQ operators (GroupBy, Join, GroupJoin), based on ordered inputs.</Description>
     <PackageLicenseUrl>https://www.gnu.org/licenses/lgpl-3.0.en.html</PackageLicenseUrl>
 	<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>https://github.com/janslav/orderedLinqOps</PackageProjectUrl>
-    <PackageReleaseNotes>First Release</PackageReleaseNotes>
+    <PackageReleaseNotes>GroupJoin operation added, bug in Join operation fixed</PackageReleaseNotes>
 	<PackageTags>linq</PackageTags>
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<Version>1.1.0</Version>
+	<NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
