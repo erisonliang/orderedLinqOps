@@ -1,5 +1,5 @@
 # orderedLinqOps
-Alternatives to some hashing-based LINQ operators (GroupBy, Join), based on ordered inputs. Available as a nuget.
+Alternatives to some hashing-based LINQ operators (GroupBy, Join, GroupJoin), based on ordered inputs. Available as a nuget.
 
 The advantage of these operators is they don't buffer and are faster.
 The limitation is that they only operate on pre-sorted input.
@@ -42,9 +42,9 @@ foreach (var cohort in query)
 ## Motivation
 LINQ operators, based on hashing and "true-false equality", are good enough for most purposes. 
 
-Sometimes however, you are working with big data that you can't or won't buffer all in memory, but you can source them ordered. For example, when they come from a SQL database. You put the "ORDER BY" clause in the SQL query, and then in C# you group/join the data as they come and go, without overflowing memory. All you need to do is define an "ordered equality" comparer, equivalent to the SQL ordering rules.
+Sometimes however, you are working with big data that you can't or won't buffer all in memory, but you can source them ordered. For example, when they come from a SQL database. You put the "ORDER BY" clause in the SQL query, and then in C# you group/join the data as they come and go, without overflowing memory. All you need to do is define an "ordered equality" comparer that is equivalent to the SQL ordering rules.
 
-Also, generally, in cases you have pre-ordered data, it makes sense to use that fact to speed up processing. Without the need to pre-build a hashtable, and without the hash-lookups, order-based processing will be much faster than normal LINQs hash-based one.
+Also, generally, in cases you have pre-ordered data and the ordering comparer, it makes sense to use that fact to speed up processing. Without the need to pre-build a hashtable, and without the hash-lookups, order-based processing will be much faster than normal LINQs hash-based one and use less memory.
 
 ## See also
 Stephen Cleary's [Comparers](https://github.com/StephenCleary/Comparers) library for easy declarative creation of both hashing and sorting comparers.
