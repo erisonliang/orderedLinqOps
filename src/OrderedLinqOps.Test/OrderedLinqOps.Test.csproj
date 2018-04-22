@@ -42,9 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Examples.cs" />
-    <Compile Include="SelectionTests.cs" />
-    <Compile Include="JoiningTests.cs" />
-    <Compile Include="GroupingTests.cs" />
+    <Compile Include="OrderedSelectTests.cs" />
+    <Compile Include="OrderedJoinTests.cs" />
+    <Compile Include="OrderedGroupByTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

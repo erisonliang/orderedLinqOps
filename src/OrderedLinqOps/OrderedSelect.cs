@@ -4,9 +4,9 @@ using System.Collections.Generic;
 namespace OrderedLinqOps
 {
     /// <summary>
-    /// Implements the Select operators
+    /// Implements the OrderedLinq extension methods
     /// </summary>
-    public static class SelectionOperators
+    public static partial class OrderedLinqOperators
     {
         /// <summary>
         /// Projects each element of an ordered sequence into a new form, while checking the correctness of the ordering.

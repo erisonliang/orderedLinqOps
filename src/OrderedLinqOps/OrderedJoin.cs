@@ -4,10 +4,8 @@ using System.Linq;
 
 namespace OrderedLinqOps
 {
-    /// <summary>
-    /// Implements the Join operators
-    /// </summary>
-    public static class JoiningOperators
+    // the Join operators
+    public static partial class OrderedLinqOperators
     {
         /// <summary>
         /// Correlates the elements of two ordered sequences based on matching keys, using a specified optional comparer.

@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace OrderedLinqOps.Test
 {
     [TestFixture]
-    public class JoiningTests
+    public class OrderedJoinTests
     {
         #region OrderedJoin
         [Test]

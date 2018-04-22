@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
@@ -7,7 +6,7 @@ using NUnit.Framework;
 namespace OrderedLinqOps.Test
 {
     [TestFixture]
-    public class SelectionTests
+    public class OrderedSelectTests
     {
         [Test]
         public void OrderedSelect_SimpleHappyPath()

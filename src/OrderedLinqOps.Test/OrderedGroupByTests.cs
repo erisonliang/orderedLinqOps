@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace OrderedLinqOps.Test
 {
     [TestFixture]
-    public class GroupingTests
+    public class OrderedGroupByTests
     {
         [Test, TestCaseSource(nameof(TestCases))]
         public void OrderedGroupBy_CompareToLinq(int[] input)

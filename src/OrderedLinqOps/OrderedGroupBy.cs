@@ -5,10 +5,8 @@ using System.Linq;
 
 namespace OrderedLinqOps
 {
-    /// <summary>
-    /// Implements the GroupBy operators
-    /// </summary>
-    public static class GroupingOperators
+    // Implements the GroupBy operators
+    public static partial class OrderedLinqOperators
     {
         /// <summary>
         /// Groups the elements of an ordered sequence according to a specified key selector function, using a specified optional comparer.
